@@ -1,0 +1,191 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>EAI-USG Study</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 16px; }
+    textarea { width: 100%; height: 220px; }
+    .box { padding: 12px; border: 1px solid #ccc; margin: 12px 0; }
+    button { padding: 10px 14px; }
+    .muted { color: #666; font-size: 0.95em; }
+  </style>
+</head>
+<body>
+  <h2>EAI-USG Validation Study</h2>
+
+  <div id="startScreen" class="box">
+    <p class="muted">Enter your participant ID (e.g., 1–30). Do not include your name.</p>
+    <input id="pid" type="number" min="1" placeholder="Participant ID">
+    <label style="display:block; margin-top:10px;">
+      <input id="consent" type="checkbox"> I consent to participate.
+    </label>
+    <button onclick="start()">Start</button>
+    <p id="startErr" style="color:red;"></p>
+  </div>
+
+  <div id="taskScreen" style="display:none;">
+    <p><b>Participant:</b> <span id="pidShow"></span> | <b>Order:</b> <span id="orderShow"></span></p>
+
+    <div class="box">
+      <p><b>Requirement (<span id="reqId"></span>)</b></p>
+      <div id="reqText"></div>
+    </div>
+
+    <div id="toolSuggestionBox" class="box" style="display:none;">
+      <p><b>EAI-USG suggestion (edit/refine it):</b></p>
+      <pre id="toolSuggestion" style="white-space:pre-wrap;"></pre>
+    </div>
+
+    <div class="box">
+      <p><b>Your final Ethical User Story (EUS):</b></p>
+      <textarea id="eus"></textarea>
+    </div>
+
+    <button onclick="submitTask()">Submit</button>
+    <p id="status" class="muted"></p>
+  </div>
+
+<script>
+  // 1) Replace this with your Apps Script Web App URL
+  const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyXZ7EIKQdJfZUa_czCsSJ3XjGLiZt95xQfKUI3drZ8Wch_2L16YgwUt67hsppMy5rD/exec";
+
+  // 2) Put your requirements here
+  // Warm-up is optional. If you don't want it, delete W0 and remove it from the sequence below.
+  const REQUIREMENTS = [
+    { id: "W0", text: "WARM-UP: The system should allow users to revoke consent at any time.",
+      tool: "" },
+
+    { id: "R1", text: "REQ 1: ...", tool: "EAI-USG suggestion for R1..." },
+    { id: "R2", text: "REQ 2: ...", tool: "EAI-USG suggestion for R2..." },
+    { id: "R3", text: "REQ 3: ...", tool: "EAI-USG suggestion for R3..." },
+    { id: "R4", text: "REQ 4: ...", tool: "EAI-USG suggestion for R4..." },
+    { id: "R5", text: "REQ 5: ...", tool: "EAI-USG suggestion for R5..." },
+    { id: "R6", text: "REQ 6: ...", tool: "EAI-USG suggestion for R6..." }
+  ];
+
+  // 3) Which ones are analyzed (6 total)
+  const ANALYZED = ["R1","R2","R3","R4","R5","R6"];
+
+  // Internal state
+  let participantId = null;
+  let order = null; // "A" or "B"
+  let taskIdx = 0;
+  let startTimeMs = null;
+
+  function start() {
+    const pid = parseInt(document.getElementById("pid").value, 10);
+    const consent = document.getElementById("consent").checked;
+    if (!pid || pid < 1) return showStartErr("Please enter a valid participant ID.");
+    if (!consent) return showStartErr("Consent is required to proceed.");
+    participantId = pid;
+
+    // Counterbalance: even -> A, odd -> B
+    order = (pid % 2 === 0) ? "A" : "B";
+
+    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("taskScreen").style.display = "block";
+    document.getElementById("pidShow").textContent = pid;
+    document.getElementById("orderShow").textContent = order;
+
+    taskIdx = 0;
+    renderTask();
+  }
+
+  function showStartErr(msg){ document.getElementById("startErr").textContent = msg; }
+
+  function conditionForRequirement(reqId) {
+    if (reqId === "W0") return "warmup";
+
+    // Split into two sets of 3 for counterbalancing
+    const set1 = ["R1","R2","R3"];
+    const set2 = ["R4","R5","R6"];
+
+    // Order A: set1 manual, set2 tool
+    // Order B: set1 tool, set2 manual
+    const inSet1 = set1.includes(reqId);
+    if (order === "A") return inSet1 ? "manual" : "tool";
+    return inSet1 ? "tool" : "manual";
+  }
+
+  function renderTask() {
+    document.getElementById("status").textContent = "";
+    document.getElementById("eus").value = "";
+
+    const sequence = ["W0", ...ANALYZED]; // includes warm-up
+    const reqId = sequence[taskIdx];
+    const req = REQUIREMENTS.find(r => r.id === reqId);
+
+    const cond = conditionForRequirement(reqId);
+
+    document.getElementById("reqId").textContent = req.id;
+    document.getElementById("reqText").textContent = req.text;
+
+    const toolBox = document.getElementById("toolSuggestionBox");
+    const toolSuggestion = document.getElementById("toolSuggestion");
+
+    if (cond === "tool") {
+      toolBox.style.display = "block";
+      toolSuggestion.textContent = req.tool || "";
+      document.getElementById("eus").value = req.tool || ""; // prefill forces edit/refine
+    } else {
+      toolBox.style.display = "none";
+      toolSuggestion.textContent = "";
+    }
+
+    startTimeMs = Date.now(); // start timing when shown
+  }
+
+  async function submitTask() {
+    const sequence = ["W0", ...ANALYZED];
+    const reqId = sequence[taskIdx];
+    const cond = conditionForRequirement(reqId);
+
+    const endTimeMs = Date.now();
+    const durationSec = (endTimeMs - startTimeMs) / 1000.0;
+
+    const eusText = document.getElementById("eus").value.trim();
+    if (!eusText) {
+      document.getElementById("status").textContent = "Please write your EUS before submitting.";
+      return;
+    }
+
+    const payload = {
+      participant_id: String(participantId),
+      order: order,
+      condition: cond,
+      requirement_id: reqId,
+      start_iso: new Date(startTimeMs).toISOString(),
+      end_iso: new Date(endTimeMs).toISOString(),
+      duration_sec: durationSec,
+      eus_text: eusText
+    };
+
+    document.getElementById("status").textContent = "Submitting...";
+
+    try {
+      const res = await fetch(ENDPOINT_URL, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: { "Content-Type": "text/plain;charset=utf-8" }
+      });
+      await res.text();
+      document.getElementById("status").textContent = "Saved.";
+    } catch (e) {
+      console.error(e);
+      document.getElementById("status").textContent = "ERROR saving. Please notify the organizer.";
+      return;
+    }
+
+    taskIdx += 1;
+    if (taskIdx >= sequence.length) {
+      document.getElementById("taskScreen").innerHTML =
+        "<h3>Done — thank you!</h3><p>You can close this page now.</p>";
+      return;
+    }
+
+    renderTask();
+  }
+</script>
+</body>
+</html>
