@@ -14,11 +14,62 @@
 <body>
   <h2>Estudo de Validação EAI-USG</h2>
 
+  <div class="box">
+
+    <h3>O que é uma Ethical User Story?</h3>
+
+    <p>
+    Em engenharia de software, <b>Histórias de Usuário</b> são descrições curtas de requisitos que
+    capturam o que um usuário precisa de um sistema. Elas geralmente seguem o formato:
+    </p>
+
+<pre>
+Como um [usuário],
+Eu quero [capacidade],
+para que [benefícios].
+</pre>
+
+    <p>
+    Esse formato ajuda equipes de desenvolvimento a transformar requisitos de alto nível em funcionalidades práticas para sistemas de software.
+    </p>
+
+    <p>
+    <b>Ethical User Stories (EUS)</b> estendem esse conceito para representar requisitos éticos de sistemas, especialmente em sistemas baseados em IA. Elas traduzem requisitos sob a ótica de princípios éticos, como transparência, privacidade, sustentabilidade, explicabilidade e beneficência, para que possam ser considerados durante o desenvolvimento do sistema.
+    </p>
+
+    <h3>Exemplo</h3>
+
+    <p>Exemplo adaptado da literatura:</p>
+
+    <div class="box">
+
+<pre>
+Como um passageiro usando o terminal de serviços,
+Eu quero saber quais dados são coletados sobre mim e por quê, 
+para que eu possa me sentir seguro de que minhas informações estão protegidas.
+</pre>
+
+<b>Critérios de Aceitação</b>
+      
+
+    </div>
+
+    <p>
+    Neste estudo você receberá alguns <b>requisitos éticos relacionados a sistemas de IA</b>.
+    Sua tarefa será transformar cada requisito em uma Ethical User Story seguindo o formato acima.
+    </p>
+
+    <p class="muted">
+    O tempo gasto em cada tarefa será registrado automaticamente para fins de pesquisa.
+    </p>
+
+  </div>
+
   <div id="startScreen" class="box">
-    <p class="muted">ID do Participante (e.g., 1–30). Não inclua seu nome para garantir anonimidade.</p>
+    <p class="muted">ID do Participante (1–30). Não inclua seu nome para garantir anonimidade.</p>
     <input id="pid" type="number" min="1" placeholder="Participant ID">
     <label style="display:block; margin-top:10px;">
-      <input id="consent" type="checkbox"> Eu ...
+      <input id="consent" type="checkbox"> Eu concordo em participar deste estudo de forma voluntária e anônima.
     </label>
     <button onclick="start()">Iniciar</button>
     <p id="startErr" style="color:red;"></p>
@@ -34,7 +85,7 @@
 
     <div id="toolSuggestionBox" class="box" style="display:none;">
       <p><b>Geração automática via EAI-USG (editar):</b></p>
-      <pre id="toolSuggestion" style="hite-space:pre-rap;"></pre>
+      <pre id="toolSuggestion" style="white-space:pre-wrap;"></pre>
     </div>
 
     <div class="box">
