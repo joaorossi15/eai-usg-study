@@ -34,7 +34,7 @@
 
     <div id="toolSuggestionBox" class="box" style="display:none;">
       <p><b>Geração automática via EAI-USG (editar):</b></p>
-      <pre id="toolSuggestion" style="white-space:pre-wrap;"></pre>
+      <pre id="toolSuggestion" style="hite-space:pre-rap;"></pre>
     </div>
 
     <div class="box">
@@ -47,13 +47,10 @@
   </div>
 
 <script>
-  // 1) Replace this with your Apps Script Web App URL
   const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyXZ7EIKQdJfZUa_czCsSJ3XjGLiZt95xQfKUI3drZ8Wch_2L16YgwUt67hsppMy5rD/exec";
 
-  // 2) Put your requirements here
-  // Warm-up is optional. If you don't want it, delete W0 and remove it from the sequence below.
   const REQUIREMENTS = [
-    { id: "W0", text: "WARM-UP: The system should allow users to revoke consent at any time.",
+    { id: "E0", text: "Exemplo: The system should allow users to revoke consent at any time.",
       tool: "" },
 
     { id: "R1", text: "REQ 1: ...", tool: "EAI-USG suggestion for R1..." },
@@ -64,12 +61,10 @@
     { id: "R6", text: "REQ 6: ...", tool: "EAI-USG suggestion for R6..." }
   ];
 
-  // 3) Which ones are analyzed (6 total)
   const ANALYZED = ["R1","R2","R3","R4","R5","R6"];
 
-  // Internal state
   let participantId = null;
-  let order = null; // "A" or "B"
+  let order = null;
   let taskIdx = 0;
   let startTimeMs = null;
 
@@ -80,7 +75,6 @@
     if (!consent) return showStartErr("Consent is required to proceed.");
     participantId = pid;
 
-    // Counterbalance: even -> A, odd -> B
     order = (pid % 2 === 0) ? "A" : "B";
 
     document.getElementById("startScreen").style.display = "none";
@@ -97,12 +91,9 @@
   function conditionForRequirement(reqId) {
     if (reqId === "W0") return "warmup";
 
-    // Split into two sets of 3 for counterbalancing
     const set1 = ["R1","R2","R3"];
     const set2 = ["R4","R5","R6"];
 
-    // Order A: set1 manual, set2 tool
-    // Order B: set1 tool, set2 manual
     const inSet1 = set1.includes(reqId);
     if (order === "A") return inSet1 ? "manual" : "tool";
     return inSet1 ? "tool" : "manual";
@@ -112,7 +103,7 @@
     document.getElementById("status").textContent = "";
     document.getElementById("eus").value = "";
 
-    const sequence = ["W0", ...ANALYZED]; // includes warm-up
+    const sequence = ["W0", ...ANALYZED];
     const reqId = sequence[taskIdx];
     const req = REQUIREMENTS.find(r => r.id === reqId);
 
@@ -127,13 +118,13 @@
     if (cond === "tool") {
       toolBox.style.display = "block";
       toolSuggestion.textContent = req.tool || "";
-      document.getElementById("eus").value = req.tool || ""; // prefill forces edit/refine
+      document.getElementById("eus").value = req.tool || ""; 
     } else {
       toolBox.style.display = "none";
       toolSuggestion.textContent = "";
     }
 
-    startTimeMs = Date.now(); // start timing when shown
+    startTimeMs = Date.now();
   }
 
   async function submitTask() {
