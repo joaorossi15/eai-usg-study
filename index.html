@@ -71,8 +71,8 @@
   function start() {
     const pid = parseInt(document.getElementById("pid").value, 10);
     const consent = document.getElementById("consent").checked;
-    if (!pid || pid < 1) return showStartErr("Please enter a valid participant ID.");
-    if (!consent) return showStartErr("Consent is required to proceed.");
+    if (!pid || pid < 1) return showStartErr("Use um ID válido.");
+    if (!consent) return showStartErr("Você precisa consentir para continuar.");
     participantId = pid;
 
     order = (pid % 2 === 0) ? "A" : "B";
@@ -89,7 +89,7 @@
   function showStartErr(msg){ document.getElementById("startErr").textContent = msg; }
 
   function conditionForRequirement(reqId) {
-    if (reqId === "W0") return "warmup";
+    if (reqId === "E0") return "warmup";
 
     const set1 = ["R1","R2","R3"];
     const set2 = ["R4","R5","R6"];
@@ -103,7 +103,7 @@
     document.getElementById("status").textContent = "";
     document.getElementById("eus").value = "";
 
-    const sequence = ["W0", ...ANALYZED];
+    const sequence = ["E0", ...ANALYZED];
     const reqId = sequence[taskIdx];
     const req = REQUIREMENTS.find(r => r.id === reqId);
 
@@ -128,7 +128,7 @@
   }
 
   async function submitTask() {
-    const sequence = ["W0", ...ANALYZED];
+    const sequence = ["E0", ...ANALYZED];
     const reqId = sequence[taskIdx];
     const cond = conditionForRequirement(reqId);
 
@@ -137,7 +137,7 @@
 
     const eusText = document.getElementById("eus").value.trim();
     if (!eusText) {
-      document.getElementById("status").textContent = "Please write your EUS before submitting.";
+      document.getElementById("status").textContent = "Escreva a EUS antes de enviar.";
       return;
     }
 
@@ -152,7 +152,7 @@
       eus_text: eusText
     };
 
-    document.getElementById("status").textContent = "Submitting...";
+    document.getElementById("status").textContent = "Enviando...";
 
     try {
       const res = await fetch(ENDPOINT_URL, {
@@ -161,17 +161,17 @@
         headers: { "Content-Type": "text/plain;charset=utf-8" }
       });
       await res.text();
-      document.getElementById("status").textContent = "Saved.";
+      document.getElementById("status").textContent = "Salvo.";
     } catch (e) {
       console.error(e);
-      document.getElementById("status").textContent = "ERROR saving. Please notify the organizer.";
+      document.getElementById("status").textContent = "Erro ao salvar. Por favor, notifique o organizador.";
       return;
     }
 
     taskIdx += 1;
     if (taskIdx >= sequence.length) {
       document.getElementById("taskScreen").innerHTML =
-        "<h3>Done — thank you!</h3><p>You can close this page now.</p>";
+        "<h3>Feito, muito obrigado!</h3><p>Você pode fechar esta página agora.</p>";
       return;
     }
 
