@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>EAI-USG Study</title>
+  <title>Validação EAI-USG</title>
   <style>
     body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 16px; }
     textarea { width: 100%; height: 220px; }
@@ -12,37 +12,37 @@
   </style>
 </head>
 <body>
-  <h2>EAI-USG Validation Study</h2>
+  <h2>Estudo de Validação EAI-USG</h2>
 
   <div id="startScreen" class="box">
-    <p class="muted">Enter your participant ID (e.g., 1–30). Do not include your name.</p>
+    <p class="muted">ID do Participante (e.g., 1–30). Não inclua seu nome para garantir anonimidade.</p>
     <input id="pid" type="number" min="1" placeholder="Participant ID">
     <label style="display:block; margin-top:10px;">
-      <input id="consent" type="checkbox"> I consent to participate.
+      <input id="consent" type="checkbox"> Eu ...
     </label>
-    <button onclick="start()">Start</button>
+    <button onclick="start()">Iniciar</button>
     <p id="startErr" style="color:red;"></p>
   </div>
 
   <div id="taskScreen" style="display:none;">
-    <p><b>Participant:</b> <span id="pidShow"></span> | <b>Order:</b> <span id="orderShow"></span></p>
+    <p><b>Participante:</b> <span id="pidShow"></span> | <b>Ordem:</b> <span id="orderShow"></span></p>
 
     <div class="box">
-      <p><b>Requirement (<span id="reqId"></span>)</b></p>
+      <p><b>Requisito (<span id="reqId"></span>)</b></p>
       <div id="reqText"></div>
     </div>
 
     <div id="toolSuggestionBox" class="box" style="display:none;">
-      <p><b>EAI-USG suggestion (edit/refine it):</b></p>
+      <p><b>Geração automática via EAI-USG (editar):</b></p>
       <pre id="toolSuggestion" style="white-space:pre-wrap;"></pre>
     </div>
 
     <div class="box">
-      <p><b>Your final Ethical User Story (EUS):</b></p>
+      <p><b>Ethical User Story (EUS):</b></p>
       <textarea id="eus"></textarea>
     </div>
 
-    <button onclick="submitTask()">Submit</button>
+    <button onclick="submitTask()">Enviar</button>
     <p id="status" class="muted"></p>
   </div>
 
