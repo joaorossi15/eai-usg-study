@@ -4,11 +4,78 @@
   <meta charset="utf-8">
   <title>Validação EAI-USG</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 16px; }
-    textarea { width: 100%; height: 220px; }
-    .box { padding: 12px; border: 1px solid #ccc; margin: 12px 0; }
-    button { padding: 10px 14px; }
-    .muted { color: #666; font-size: 0.95em; }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 16px;
+      line-height: 1.5;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 320px;
+      padding: 16px;
+      border: 1px solid #bdbdbd;
+      border-radius: 8px;
+      font-size: 15px;
+      line-height: 1.6;
+      font-family: "Courier New", Courier, monospace;
+      box-sizing: border-box;
+      resize: vertical;
+      background: #fafafa;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #4a90e2;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.12);
+    }
+
+    .box {
+      padding: 12px;
+      border: 1px solid #ccc;
+      margin: 12px 0;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    button {
+      padding: 10px 14px;
+      border: 1px solid #999;
+      border-radius: 6px;
+      background: #f5f5f5;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #ececec;
+    }
+
+    .muted {
+      color: #666;
+      font-size: 0.95em;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .helper {
+      margin-top: 8px;
+      font-size: 0.92em;
+      color: #666;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin: 0;
+      font-family: "Courier New", Courier, monospace;
+    }
   </style>
 </head>
 <body>
@@ -94,8 +161,23 @@ para que eu possa me sentir seguro de que minhas informações estão protegidas
     </div>
 
     <div class="box">
-      <p><b>Ethical User Story (EUS):</b></p>
-      <textarea id="eus"></textarea>
+      <label for="eus" class="field-label">Ethical User Story (EUS)</label>
+      <textarea
+        id="eus"
+        placeholder="Título:
+
+Descrição:
+Como um ...
+Eu quero ...
+para que ...
+
+Work:
+...
+...
+..."></textarea>
+      <div class="helper">
+        Escreva ou edite a história no formato esperado. Você pode ajustar título, descrição e itens de trabalho.
+      </div>
     </div>
 
     <button onclick="submitTask()">Enviar</button>
@@ -254,10 +336,21 @@ Desenvolver um mecanismo para conduzir avaliações de impacto discriminatório 
     if (cond === "tool") {
       toolBox.style.display = "block";
       toolSuggestion.textContent = req.tool || "";
-      document.getElementById("eus").value = req.tool || ""; 
+      document.getElementById("eus").value = req.tool || "";
     } else {
       toolBox.style.display = "none";
       toolSuggestion.textContent = "";
+      document.getElementById("eus").placeholder = `Título:
+
+Descrição:
+Como um ...
+Eu quero ...
+para que ...
+
+Work:
+...
+...
+...`;
     }
 
     startTimeMs = Date.now();
